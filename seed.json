@@ -1,0 +1,164 @@
+{
+  "courses": {
+    "course1": {
+      "title": "Full Stack Web Development",
+      "category": "development",
+      "instructor": "Talha",
+      "price": "2000 BDT",
+      "rating": 4.8,
+      "reviews": 3200,
+      "short": "প্র্যাকটিকাল প্রজেক্ট সহ ফুলস্ট্যাক শেখা।",
+      "description": "React, Node, MongoDB সহ পুরো স্ট্যাক শিখবেন।"
+    },
+    "course2": {
+      "title": "Web and Mobile Design",
+      "category": "design",
+      "instructor": "Sara",
+      "price": "1500 BDT",
+      "rating": 4.6,
+      "reviews": 2800,
+      "short": "UI/UX এবং মোবাইল ডিজাইন শেখা।",
+      "description": "Figma, Adobe XD, এবং রেসপনসিভ ডিজাইন কভার করা হবে।"
+    },
+    "course3": {
+      "title": "Fundamentals of C++",
+      "category": "language",
+      "instructor": "Imran",
+      "price": "1200 BDT",
+      "rating": 4.9,
+      "reviews": 5000,
+      "short": "C++ এর বেসিক থেকে অ্যাডভান্স।",
+      "description": "ডেটা স্ট্রাকচার, OOP, এবং প্রজেক্ট সহ C++ শেখা।"
+    },
+    "course4": {
+      "title": "Beginning Java Programming",
+      "category": "language",
+      "instructor": "Rafi",
+      "price": "1300 BDT",
+      "rating": 4.5,
+      "reviews": 2100,
+      "short": "Java এর বেসিক সিনট্যাক্স ও প্রজেক্ট।",
+      "description": "Java দিয়ে অবজেক্ট ওরিয়েন্টেড প্রোগ্রামিং শেখা।"
+    },
+    "course5": {
+      "title": "Basic Principles of Python",
+      "category": "language",
+      "instructor": "Apar",
+      "price": "1000 BDT",
+      "rating": 4.9,
+      "reviews": 4800,
+      "short": "Python এর বেসিক সিনট্যাক্স ও প্রজেক্ট।",
+      "description": "Python দিয়ে ডেটা অ্যানালাইসিস ও অটোমেশন শেখা।"
+    },
+    "course6": {
+      "title": "Graphics Design Fundamentals",
+      "category": "design",
+      "instructor": "Sara",
+      "price": "1800 BDT",
+      "rating": 4.7,
+      "reviews": 4100,
+      "short": "গ্রাফিক্স ডিজাইনের মূলনীতি।",
+      "description": "Photoshop, Illustrator, এবং ব্র্যান্ডিং শেখা।"
+    },
+    "course7": {
+      "title": "React & Redux Mastery",
+      "category": "development",
+      "instructor": "Talha",
+      "price": "2200 BDT",
+      "rating": 4.8,
+      "reviews": 2600,
+      "short": "React ও Redux দিয়ে SPA বানানো।",
+      "description": "Hooks, Context API, Redux Toolkit সহ প্রজেক্ট।"
+    },
+    "course8": {
+      "title": "Node.js API Bootcamp",
+      "category": "development",
+      "instructor": "Imran",
+      "price": "2100 BDT",
+      "rating": 4.6,
+      "reviews": 1900,
+      "short": "Node.js দিয়ে REST API বানানো।",
+      "description": "Express, MongoDB, JWT Auth সহ প্রজেক্ট।"
+    },
+    "course9": {
+      "title": "Data Science with Pandas",
+      "category": "data",
+      "instructor": "Rafi",
+      "price": "2500 BDT",
+      "rating": 4.9,
+      "reviews": 3300,
+      "short": "Pandas দিয়ে ডেটা অ্যানালাইসিস।",
+      "description": "Numpy, Pandas, Matplotlib সহ প্রজেক্ট।"
+    },
+    "course10": {
+      "title": "Machine Learning Essentials",
+      "category": "data",
+      "instructor": "Apar",
+      "price": "3000 BDT",
+      "rating": 4.7,
+      "reviews": 2800,
+      "short": "ML এর বেসিক অ্যালগরিদম।",
+      "description": "Regression, Classification, Clustering শেখা।"
+    },
+    "course11": {
+      "title": "Flutter Mobile Apps",
+      "category": "mobile",
+      "instructor": "Sara",
+      "price": "2200 BDT",
+      "rating": 4.8,
+      "reviews": 2700,
+      "short": "Flutter দিয়ে মোবাইল অ্যাপ বানানো।",
+      "description": "Dart, Widgets, Firebase Integration।"
+    },
+    "course12": {
+      "title": "Kotlin for Android",
+      "category": "mobile",
+      "instructor": "Imran",
+      "price": "2000 BDT",
+      "rating": 4.6,
+      "reviews": 2300,
+      "short": "Kotlin দিয়ে Android অ্যাপ।",
+      "description": "Android Studio, Jetpack Compose সহ প্রজেক্ট।"
+    },
+    "course13": {
+      "title": "TypeScript Deep Dive",
+      "category": "development",
+      "instructor": "Talha",
+      "price": "1700 BDT",
+      "rating": 4.7,
+      "reviews": 2600,
+      "short": "TypeScript এর অ্যাডভান্স কনসেপ্ট।",
+      "description": "Generics, Decorators, Type Safety।"
+    },
+    "course14": {
+      "title": "Next.js & SSR",
+      "category": "development",
+      "instructor": "Rafi",
+      "price": "2400 BDT",
+      "rating": 4.8,
+      "reviews": 3100,
+      "short": "Next.js দিয়ে SSR ও SSG।",
+      "description": "Routing, API Routes, Deployment।"
+    },
+    "course15": {
+      "title": "UI/UX Research Basics",
+      "category": "design",
+      "instructor": "Apar",
+      "price": "1600 BDT",
+      "rating": 4.5,
+      "reviews": 1800,
+      "short": "UI/UX রিসার্চ মেথড।",
+      "description": "User Journey, Wireframing, Testing।"
+    },
+    "course16": {
+      "title": "Figma Advanced",
+      "category": "design",
+      "instructor": "Sara",
+      "price": "1900 BDT",
+      "rating": 4.7,
+      "reviews": 2100,
+      "short": "Figma এর অ্যাডভান্স ফিচার।",
+      "description": "Components, Auto Layout, Prototyping।"
+    }
+  }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course Details</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <!-- Use same Firebase bootstrap as index by opening index first, or duplicate init here if needed -->
+  <script type="module">
+    // If user lands directly on this page, init Firebase too:
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY_HERE",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    window.firebaseAuth = getAuth(app);
+    window.firebaseDB = getFirestore(app);
+    window.authFunctions = { onAuthStateChanged };
+    window.firestoreFunctions = { doc, getDoc, setDoc };
+  </script>
+</head>
+<body>
+  <header class="glass-header">
+    <div class="container navbar">
+        <div class="logo"><img src="https://i.postimg.cc/1Xk9bjC2/Copilot-20250921-112342.png" alt="Logo" width="50" height="50"></div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="course-details">
+    <div class="glass-card" style="padding:20px; margin-top:20px;">
+      <h2 id="course-title">Loading Course...</h2>
+      <p id="course-instructor"></p>
+      <p class="card-rating" id="course-meta"></p>
+      <div class="card-image" id="course-thumb"></div>
+      <p id="course-description" style="margin-top:10px;"></p>
+
+      <h3 id="course-price" style="margin-top:12px;"></h3>
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button id="enroll-btn" class="glass-button primary">Enroll Now</button>
+        <a href="index.html#shop" class="glass-button">Back to All Courses</a>
+      </div>
+    </div>
+
+    <section style="margin:24px 0;">
+      <h3>Syllabus</h3>
+      <div class="glass-card" style="padding:16px;">
+        <ul id="syllabus-list" style="line-height:1.8;">
+          <li>Introduction & Setup</li>
+          <li>Core Concepts</li>
+          <li>Project: Build a Real App</li>
+          <li>Testing & Deployment</li>
+          <li>Bonus: Tips & Best Practices</li>
+        </ul>
+      </div>
+    </section>
+
+    <section style="margin:24px 0;">
+      <h3>Student Reviews</h3>
+      <div class="blog-grid" id="reviews-grid">
+        <article class="glass-card"><h4>Hasan</h4><p>Excellent practical examples. Learned a lot.</p></article>
+        <article class="glass-card"><h4>Aysha</h4><p>Beautiful UI/UX, deep content. Highly recommended!</p></article>
+        <article class="glass-card"><h4>Monirul</h4><p>Project-based learning—best experience.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get("id");
+
+    const { doc, getDoc, setDoc } = window.firestoreFunctions || {};
+    const db = window.firebaseDB;
+    const auth = window.firebaseAuth;
+
+    const demoFind = (id) => {
+      // reconstruct same demo list as index for direct visits
+      const titles = [
+        'Full Stack Web Development','Web and Mobile Design','Fundamentals of C++','Beginning Java Programming',
+        'Basic Principles of Python','Graphics Design Fundamentals','React & Redux Mastery','Node.js API Bootcamp',
+        'Data Science with Pandas','Machine Learning Essentials','Flutter Mobile Apps','Kotlin for Android',
+        'TypeScript Deep Dive','Next.js & SSR','UI/UX Research Basics','Figma Advanced'
+      ];
+      const categories = ['development','design','data','mobile','language'];
+      const i = (Number((id || '').replace('demo-',''))-1) || 0;
+      const t = titles[i % titles.length];
+      const cat = categories[i % categories.length];
+      const price = `${(1999 + (i%7)*500)} BDT`;
+      const rating = (4 + (i % 10)/10).toFixed(1);
+      const reviews = (1 + i) * 73;
+      return { id, title:t, category:cat, instructor:'Talha', price, rating, reviews, short:'ডেমো কোর্স।', thumbnail:'' };
+    };
+
+    async function loadCourse() {
+      let data = null;
+      if (db && doc && getDoc && courseId && !courseId.startsWith('demo-')) {
+        try {
+          const ref = doc(db, "courses", courseId);
+          const snap = await getDoc(ref);
+          if (snap.exists()) data = snap.data();
+        } catch {}
+      }
+      if (!data) {
+        data = demoFind(courseId || 'demo-1');
+      }
+      document.getElementById("course-title").textContent = data.title || 'Untitled Course';
+      document.getElementById("course-instructor").textContent = "Instructor: " + (data.instructor || 'Unknown');
+      document.getElementById("course-description").textContent = data.description || "In this course, you will learn through practical projects.";
+      document.getElementById("course-price").textContent = data.price || 'Contact for Price';
+      document.getElementById("course-meta").textContent = `⭐ ${Number(data.rating||4.5)} • ${Number(data.reviews||120)} Reviews`;
+    }
+
+    async function enroll() {
+      const user = auth?.currentUser;
+      if (!user) { alert("Please log in first!"); return; }
+      try {
+        if (db && setDoc && doc) {
+          await setDoc(doc(db, "enrollments", `${user.uid}_${courseId}`), {
+            userId: user.uid, courseId, enrolledAt: new Date().toISOString()
+          });
+        } else {
+          const key = 'enrollments';
+          const prev = JSON.parse(localStorage.getItem(key) || '[]');
+          prev.push({ userId: 'localUser', courseId, enrolledAt: new Date().toISOString() });
+          localStorage.setItem(key, JSON.stringify(prev));
+        }
+        alert("Successfully enrolled in the course!");
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        alert("Enrollment failed: " + e.message);
+      }
+    }
+
+    document.getElementById('enroll-btn').addEventListener('click', enroll);
+    loadCourse();
+  </script>
+</body>
+</html>

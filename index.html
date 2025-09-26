@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ONLINE COURSE PLATFORM-BY TALHA</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Firebase init (optional but supported). Keep placeholders or replace with real keys -->
+  <script type="module">
+    const firebaseConfig = {
+      
+  apiKey: "AIzaSyD4O6SHrpeDnzKMBWkudVFk1j1JoYiO3HY",
+  authDomain: "calling-app-e7ad2.firebaseapp.com",
+  projectId: "calling-app-e7ad2",
+  storageBucket: "calling-app-e7ad2.firebasestorage.app",
+  messagingSenderId: "241816266208",
+  appId: "1:241816266208:web:16f60c06feb8919da83785"
+};
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import {
+      getFirestore, collection, getDocs, doc, getDoc, setDoc, query, where
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+
+    // expose to window for other pages
+    window.firebaseAuth = getAuth(app);
+    window.firebaseDB = getFirestore(app);
+    window.authFunctions = {
+      onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword
+    };
+    window.firestoreFunctions = {
+      getDocs, collection, doc, getDoc, setDoc, query, where
+    };
+  </script>
+  <script src="script.js" defer></script>
+</head>
+<body id="app-body">
+  <header class="glass-header">
+    <div class="container navbar">
+    <div class="logo"><img src="https://i.postimg.cc/1Xk9bjC2/Copilot-20250921-112342.png" alt="Logo" width="50" height="50"></div>
+      <nav class="desktop-nav">
+        <a href="#shop">SHOP</a>
+        <a href="#about">ABOUT US</a>
+        <a href="#blog">BLOG</a>
+        <a href="#" id="auth-link" class="glass-button primary">LOGIN/SIGN UP</a>
+      </nav>
+      <button id="menu-toggle" class="glass-button menu-icon">☰</button>
+    </div>
+  </header>
+
+  <section id="hero-section" class="hero-section">
+    <div class="glass-content">
+      <h1 class="animate-in">WELCOME TO OUR ONLINE COURSE PLATFORM BY TALHA</h1>
+      <p class="animate-in delay-1">Learn creative skills from world-class experts.</p>
+      <div class="hero-input animate-in delay-2">
+        <input type="email" id="hero-email" placeholder="Enter your email"/>
+        <button class="glass-button primary" id="hero-get-started">Get Started →</button>
+      </div>
+      <div class="hero-links animate-in delay-3">
+        <a class="mini-link" href="https://talha-2008.github.io/biodata/animation" target="_blank" rel="noopener">View Example Platform</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container tools-bar">
+    <div class="filters">
+      <input type="text" id="search-input" placeholder="Search courses (e.g., Python, Design)"/>
+      <select id="category-select">
+        <option value="">All Categories</option>
+        <option value="development">Development</option>
+        <option value="design">Design</option>
+        <option value="data">Data & AI</option>
+        <option value="mobile">Mobile</option>
+        <option value="language">Programming Languages</option>
+      </select>
+      <select id="sort-select">
+        <option value="popular">Popular</option>
+        <option value="rating">Rating</option>
+        <option value="reviews">Number of Reviews</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+      </select>
+    </div>
+  </section>
+
+  <main id="shop" class="container">
+    <h2 class="animate-in">All Professional Courses</h2>
+    <p id="loading-status" style="text-align:center;">Loading courses...</p>
+
+    <div id="course-grid"></div>
+
+    <div class="pagination">
+      <button class="glass-button" id="load-more-btn">Load More</button>
+    </div>
+  </main>
+
+  <section id="about" class="container about-section">
+    <h3>About Us</h3>
+    <p>
+      We are a modern online education platform. Here you can find courses on various topics including development, design, data science, AI, and mobile apps. Experience exceptional learning with real projects, live sessions, and support.
+    </p>
+  </section>
+
+  <section id="blog" class="container blog-section">
+    <h3>Blog</h3>
+    <div class="blog-grid">
+      <article class="glass-card">
+        <h4>How to Learn Quickly and Build Projects</h4>
+        <p>Practice, small goals, and solving real-world problems—these three make learning the fastest.</p>
+      </article>
+      <article class="glass-card">
+        <h4>UI/UX: From Starter to Pro</h4>
+        <p>Foundational principles, user research, and consistent visual language—these elevate the product.</p>
+      </article>
+      <article class="glass-card">
+        <h4>Your First Steps in Data Science</h4>
+        <p>Python, Pandas, and Visualization—make the start friendly. Then step into ML.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Your Platform. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Auth modal -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="glass-card modal-content">
+      <h3>Login / Create New Account</h3>
+      <form id="auth-form">
+        <input type="email" id="auth-email" placeholder="Email" required/>
+        <input type="password" id="auth-password" placeholder="Password" required/>
+        <button type="submit" class="glass-button primary" id="auth-submit-btn">Login</button>
+        <button type="button" class="glass-button" id="toggle-auth-btn">Register</button>
+      </form>
+      <button class="close-modal-btn">&times;</button>
+    </div>
+  </div>
+</body>
+</html>
