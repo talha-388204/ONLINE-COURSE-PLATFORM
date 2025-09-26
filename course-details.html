@@ -9,25 +9,25 @@
   <script type="module">
     // If user lands directly on this page, init Firebase too:
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY_HERE",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
+      apiKey: "AIzaSyD4O6SHrpeDnzKMBWkudVFk1j1JoYiO3HY",
+      authDomain: "calling-app-e7ad2.firebaseapp.com",
+      projectId: "calling-app-e7ad2",
+      storageBucket: "calling-app-e7ad2.firebasestorage.app",
+      messagingSenderId: "241816266208",
+      appId: "1:241816266208:web:16f60c06feb8919da83785"
     };
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import {
       getAuth, onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
     import {
-      getFirestore, doc, getDoc, setDoc
+      getFirestore, doc, getDoc, setDoc, collection, addDoc
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     const app = initializeApp(firebaseConfig);
     window.firebaseAuth = getAuth(app);
     window.firebaseDB = getFirestore(app);
     window.authFunctions = { onAuthStateChanged };
-    window.firestoreFunctions = { doc, getDoc, setDoc };
+    window.firestoreFunctions = { doc, getDoc, setDoc, collection, addDoc };
   </script>
 </head>
 <body>
@@ -83,9 +83,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const courseId = urlParams.get("id");
 
-    const { doc, getDoc, setDoc } = window.firestoreFunctions || {};
-    const db = window.firebaseDB;
-    const auth = window.firebaseAuth;
+  const { doc, getDoc, setDoc, addDoc } = window.firestoreFunctions || {};
+  const db = window.firebaseDB;
+  const auth = window.firebaseAuth;
 
     const demoFind = (id) => {
       // reconstruct same demo list as index for direct visits
@@ -122,20 +122,37 @@
       document.getElementById("course-description").textContent = data.description || "In this course, you will learn through practical projects.";
       document.getElementById("course-price").textContent = data.price || 'Contact for Price';
       document.getElementById("course-meta").textContent = `⭐ ${Number(data.rating||4.5)} • ${Number(data.reviews||120)} Reviews`;
+      // thumbnail handling: insert an <img> so object-fit rules apply consistently
+      const thumbEl = document.getElementById('course-thumb');
+      const thumb = data.thumbnail || '';
+      if (thumbEl) {
+        const finalThumb = thumb || 'https://i.postimg.cc/HL4QQ9R6/Whats-App-Image-2025-09-26-at-21-14-49-81ac97cb.jpg';
+        // clear existing content and append img
+        thumbEl.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = finalThumb;
+        img.alt = data.title || 'Course Cover';
+        thumbEl.appendChild(img);
+        thumbEl.classList.add('has-thumb');
+      }
     }
 
     async function enroll() {
       const user = auth?.currentUser;
-      if (!user) { alert("Please log in first!"); return; }
+      if (!user) { alert('প্রথমে লগইন করুন!'); return; }
       try {
         if (db && setDoc && doc) {
-          await setDoc(doc(db, "enrollments", `${user.uid}_${courseId}`), {
-            userId: user.uid, courseId, enrolledAt: new Date().toISOString()
+          await setDoc(doc(db, 'enrollments', `${user.uid}_${courseId}`), {
+            userId: user.uid,
+            courseId,
+            enrolledAt: new Date().toISOString()
           });
+        } else if (db && addDoc && collection) {
+          await addDoc(collection(db, 'enrollments'), { userId: user.uid, courseId, enrolledAt: new Date().toISOString() });
         } else {
           const key = 'enrollments';
           const prev = JSON.parse(localStorage.getItem(key) || '[]');
-          prev.push({ userId: 'localUser', courseId, enrolledAt: new Date().toISOString() });
+          prev.push({ userId: user.uid, courseId, enrolledAt: new Date().toISOString() });
           localStorage.setItem(key, JSON.stringify(prev));
         }
         alert("Successfully enrolled in the course!");

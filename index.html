@@ -64,8 +64,8 @@
         <input type="email" id="hero-email" placeholder="Enter your email"/>
         <button class="glass-button primary" id="hero-get-started">Get Started →</button>
       </div>
-      <div class="hero-links animate-in delay-3">
-        <a class="mini-link" href="https://talha-2008.github.io/biodata/animation" target="_blank" rel="noopener">View Example Platform</a>
+      <div class="hero-links animate-in delay-3" >
+        <a class="mini-link" href="https://talha-2008.github.io/biodata/animation" target="_blank" rel="noopener" >View developer's profile (Talha)</a>
       </div>
     </div>
   </section>
@@ -127,17 +127,62 @@
     </div>
   </section>
 
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 Your Platform. All rights reserved.</p>
-    </div>
-  </footer>
-
+  <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-col">
+                <h4>About Me</h4>
+                <ul>
+                    <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="#about">About Me</a></li>
+                    <li><a href="#info">Other Info</a></li>
+                    <li><a href="#">My Journey</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#projects">Web Development</a></li>
+                    <li><a href="#">Custom Projects</a></li>
+                    <li><a href="#">Portfolio Design</a></li>
+                    <li><a href="#">Mentorship</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal & Policy</h4>
+                <ul>
+                    <li><a href="./legal-policy/">Privacy Policy</a></li>
+                    <li><a href="./legal-policy/#terms">Terms of Use</a></li>
+                    <li><a href="./legal-policy/#cookie">Cookie Policy</a></li>
+                    <li><a href="./legal-policy/#disclaimer">Disclaimer</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Get in Touch</h4>
+                <ul>
+                    <li><a href="https://wa.me/qr/B2VPVRBPNQAZF1" target="_blank">WhatsApp</a></li>
+                    <li><a href="https://t.me/talha91108" target="_blank">Telegram</a></li>
+                    <li><a href="mailto:monirulhasantalha@gmail.com">Email</a></li>
+                    <li><a href="#contact">Contact Form</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MONIRUL HASAN TALHA. All rights reserved.</p>
+            <div class="footer-social-links">
+                <a href="https://www.facebook.com/talha171219" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://wa.me/qr/B2VPVRBPNQAZF1" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://t.me/talha91108" target="_blank" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                <a href="https://github.com/talha-171219" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
   <!-- Auth modal -->
   <div id="auth-modal" class="modal-overlay hidden">
     <div class="glass-card modal-content">
       <h3>Login / Create New Account</h3>
       <form id="auth-form">
+        <input type="text" id="auth-name" placeholder="Full name (optional)" />
         <input type="email" id="auth-email" placeholder="Email" required/>
         <input type="password" id="auth-password" placeholder="Password" required/>
         <button type="submit" class="glass-button primary" id="auth-submit-btn">Login</button>

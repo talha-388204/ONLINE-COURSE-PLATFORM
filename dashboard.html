@@ -7,23 +7,26 @@
   <link rel="stylesheet" href="styles.css"/>
   <script type="module">
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY_HERE",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
+      apiKey: "AIzaSyD4O6SHrpeDnzKMBWkudVFk1j1JoYiO3HY",
+      authDomain: "calling-app-e7ad2.firebaseapp.com",
+      projectId: "calling-app-e7ad2",
+      storageBucket: "calling-app-e7ad2.firebasestorage.app",
+      messagingSenderId: "241816266208",
+      appId: "1:241816266208:web:16f60c06feb8919da83785"
     };
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+  import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     window.addEventListener('DOMContentLoaded', async () => {
-      const userNameEl = document.getElementById('user-name');
-      const enrolledGrid = document.getElementById('enrolled-grid');
+  const userNameEl = document.getElementById('user-name');
+  const userPhotoEl = document.getElementById('user-photo');
+  const userBioEl = document.getElementById('user-bio');
+  const publishBtn = document.getElementById('publish-course-btn');
+  const enrolledGrid = document.getElementById('enrolled-grid');
 
       onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -43,6 +46,17 @@
           `).join('');
         } else {
           userNameEl.textContent = user.email;
+          // load user profile document
+          try {
+            const uDoc = await getDoc(doc(db, 'users', user.uid));
+            if (uDoc.exists()) {
+              const ud = uDoc.data();
+              userNameEl.textContent = ud.name || user.email;
+              if (userPhotoEl && ud.photoURL) userPhotoEl.src = ud.photoURL;
+              if (userBioEl) userBioEl.textContent = ud.bio || '';
+              if (publishBtn) publishBtn.style.display = (ud.role === 'instructor') ? 'inline-block' : 'none';
+            }
+          } catch (e) { console.warn('Failed to load user profile', e); }
           try {
             const qEnroll = query(collection(db, 'enrollments'), where('userId','==', user.uid));
             const snap = await getDocs(qEnroll);
@@ -54,20 +68,28 @@
             }
             // Fetch course titles (optional)
             const cards = [];
-            for (const e of enrolls) {
-              let title = e.courseId;
-              try {
-                const cSnap = await getDoc(doc(db, 'courses', e.courseId));
-                if (cSnap.exists()) title = cSnap.data().title || e.courseId;
-              } catch {}
-              cards.push(`
-                <div class="glass-card" style="padding:16px;">
-                  <h4>${title}</h4>
-                  <p>Enrolled: ${new Date(e.enrolledAt).toLocaleString()}</p>
-                  <a href="course-details.html?id=${e.courseId}" class="glass-button primary">Continue Learning</a>
-                </div>
-              `);
-            }
+              for (const e of enrolls) {
+                let title = e.courseId;
+                let thumb = '';
+                try {
+                  const cSnap = await getDoc(doc(db, 'courses', e.courseId));
+                  if (cSnap.exists()) {
+                    const cd = cSnap.data();
+                    title = cd.title || e.courseId;
+                    thumb = cd.thumbnail || '';
+                  }
+                } catch {}
+                cards.push(`
+                  <div class="glass-card" style="padding:16px; display:flex; gap:12px; align-items:center;">
+                    <div class="card-image small"><img src="${thumb||'https://i.postimg.cc/HL4QQ9R6/Whats-App-Image-2025-09-26-at-21-14-49-81ac97cb.jpg'}" alt="${title}"/></div>
+                    <div style="flex:1">
+                      <h4>${title}</h4>
+                      <p>Enrolled: ${new Date(e.enrolledAt).toLocaleString()}</p>
+                    </div>
+                    <a href="course-details.html?id=${e.courseId}" class="glass-button primary">Continue</a>
+                  </div>
+                `);
+              }
             enrolledGrid.innerHTML = cards.join('');
           } catch (err) {
             enrolledGrid.innerHTML = '<p class="glass-card" style="padding:12px;">There was a problem loading the data.</p>';
@@ -75,7 +97,26 @@
         }
       });
 
-      document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+      publishBtn && publishBtn.addEventListener('click', async () => {
+        // show a prompt to create a simple course (title + thumbnail + price)
+        const title = prompt('Course title');
+        if (!title) return;
+        try {
+          await addDoc(collection(db, 'courses'), {
+            title,
+            instructor: user.email,
+            thumbnail: '',
+            price: 'Contact',
+            createdAt: new Date().toISOString()
+          });
+          alert('Course published (draft).');
+        } catch (e) { alert('Failed to publish: ' + e.message); }
+      });
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        // explicit logout without confirm
+        signOut(auth);
+      });
     });
   </script>
 </head>
@@ -91,8 +132,17 @@
 
   <main class="container" style="margin-top:20px;">
     <div class="glass-card" style="padding:18px;">
-      <h2>Welcome, <span id="user-name">Loading...</span></h2>
-      <button id="logout-btn" class="glass-button" style="margin-top:10px;">Logout</button>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <img id="user-photo" src="https://via.placeholder.com/64" alt="User" width="64" height="64" style="border-radius:8px; object-fit:cover;"/>
+        <div>
+          <h2>Welcome, <span id="user-name">Loading...</span></h2>
+          <p id="user-bio" style="margin:4px 0 0; opacity:0.9; font-size:0.95em;"></p>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <button id="publish-course-btn" class="glass-button" style="display:none;">Publish Course</button>
+        <button id="logout-btn" class="glass-button" style="margin-left:8px;">Logout</button>
+      </div>
     </div>
 
     <section style="margin:24px 0;">

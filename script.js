@@ -17,6 +17,9 @@ const sortSelect = document.getElementById('sort-select');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const heroGetStarted = document.getElementById('hero-get-started');
 
+// Default thumbnail used when a course doesn't provide one
+const DEFAULT_THUMB = 'https://i.postimg.cc/HL4QQ9R6/Whats-App-Image-2025-09-26-at-21-14-49-81ac97cb.jpg';
+
 let isSigningUp = false;
 let allCourses = [];       // master list
 let filteredCourses = [];  // current filtered list
@@ -51,7 +54,7 @@ const demoCourses = Array.from({ length: 48 }).map((_, i) => {
     rating,
     reviews,
     short: 'এই কোর্সটি আপনাকে ' + t + ' সম্পর্কে প্রাথমিক থেকে উন্নত স্তর পর্যন্ত দক্ষতা অর্জনে সাহায্য করবে। ',
-    thumbnail: '',
+    thumbnail: DEFAULT_THUMB,
   };
 });
 
@@ -80,7 +83,8 @@ document.addEventListener('click', (e) => {
   if (e.target.id === 'auth-link') {
     e.preventDefault();
     if (authLink.textContent.includes('Dashboard')) {
-      if (confirm('Are you sure you want to sign out?')) handleSignOut();
+      // go to dashboard when logged in
+      window.location.href = 'dashboard.html';
     } else {
       authModal.classList.remove('hidden');
     }
@@ -102,6 +106,20 @@ authForm && authForm.addEventListener('submit', async (e) => {
 async function handleSignUp(email, password) {
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    // create a user profile document in Firestore
+    try {
+      const user = auth.currentUser;
+      const name = document.getElementById('auth-name')?.value || '';
+      if (user && setDoc && doc) {
+        await setDoc(doc(db, 'users', user.uid), {
+          email: user.email,
+          name: name || user.email.split('@')[0],
+          photoURL: '',
+          bio: '',
+          role: 'student'
+        });
+      }
+    } catch (e) { console.warn('Failed to create user profile:', e); }
     alert('Registration successful! Welcome to the Dashboard.');
     authModal.classList.add('hidden');
   } catch (error) { alert(`Registration failed: ${error.message}`); }
@@ -147,7 +165,7 @@ function setupAuthStateListener() {
           rating: Number(c.rating || 4.5),
           reviews: Number(c.reviews || 100),
           short: c.short || 'কোর্সের সংক্ষিপ্ত বর্ণনা পাওয়া যায়নি।',
-          thumbnail: c.thumbnail || '',
+            thumbnail: (c.thumbnail && c.thumbnail.trim()) ? c.thumbnail : DEFAULT_THUMB,
         });
       });
     }
@@ -176,7 +194,7 @@ function renderNextPage() {
     card.classList.add('course-card');
     card.style.transitionDelay = `${0.05 * idx}s`;
     card.innerHTML = `
-      <div class="card-image"></div>
+      <div class="card-image"><img src="${course.thumbnail || DEFAULT_THUMB}" alt="${course.title}" /></div>
       <div class="card-top">
         <h3>${course.title}</h3>
         <span class="badge">${labelForCategory(course.category)}</span>
@@ -286,3 +304,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   try { setupAuthStateListener(); } catch(e) {}
   await loadCoursesFromDB();
 });
+
+// Hamburger menu toggle (mobile)
+const menuToggle = document.getElementById('menu-toggle');
+const desktopNav = document.querySelector('.desktop-nav');
+if (menuToggle && desktopNav) {
+  menuToggle.addEventListener('click', () => {
+    desktopNav.classList.toggle('open');
+    // simple aria toggle
+    const expanded = desktopNav.classList.contains('open');
+    menuToggle.setAttribute('aria-expanded', expanded);
+  });
+}
